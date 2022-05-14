@@ -11,12 +11,12 @@ function main() {
   try {
     // slideデータを取得
     const presentation = SlidesApp.openById(presentationId)
-    const slides = presentation.getSlides();
-    const page_id = slides[0].getObjectId();
+    const slides = presentation.getSlides()
+    const page_id = slides[0].getObjectId()
     // richiMenuIdを取得
     const richMenuId = createNewRichMenu()
     // 生成した画像のファイルを取得
-    const file = slideToPng(presentationId, page_id, 'png', 1);
+    const file = slideToPng(presentationId, page_id, 'png', 1)
     // richMenuIdに画像を紐付け
     uploadImage(richMenuId, file)
     // デフォルトのリッチメニューに設定
@@ -33,18 +33,18 @@ function main() {
  */
 function slideToPng(presentation_id, page_id, slidesNumber) {
   const folder = DriveApp.getFolderById(folderId)
-  let ext = 'png';
-  const url = "https://docs.google.com/presentation/d/" + presentation_id + "/export/" + 'png' + "?id=" + presentation_id + "&pageid=" + page_id;
+  let ext = 'png'
+  const url = "https://docs.google.com/presentation/d/" + presentation_id + "/export/" + 'png' + "?id=" + presentation_id + "&pageid=" + page_id
   const options = {
     method: "get",
     headers: { "Authorization": "Bearer " + ScriptApp.getOAuthToken() },
     muteHttpExceptions: true
-  };
+  }
 
-  const response = UrlFetchApp.fetch(url, options);
+  const response = UrlFetchApp.fetch(url, options)
   if (response.getResponseCode() === 200) {
-    const presentation = SlidesApp.openById(presentation_id);
-    const newFile = folder.createFile(response.getBlob()).setName(presentation.getName() + '_' + slidesNumber + '.' + ext);
+    const presentation = SlidesApp.openById(presentation_id)
+    const newFile = folder.createFile(response.getBlob()).setName(presentation.getName() + '_' + slidesNumber + '.' + ext)
     console.log(`uploaded!: https://drive.google.com/uc?export=view&id=${newFile.getId()}`)
     return newFile
   } else {
@@ -59,7 +59,7 @@ function slideToPng(presentation_id, page_id, slidesNumber) {
 function setDefaultMenu(richMenuId) {
   const url = `https://api.line.me/v2/bot/user/all/richmenu/${richMenuId}`
   const headers = {
-    'Content-Type': 'application/json; charset=UTF-8',
+    'Content-Type': 'application/json charset=UTF-8',
     'Authorization': 'Bearer ' + access_token,
   }
 
@@ -68,7 +68,7 @@ function setDefaultMenu(richMenuId) {
     'headers': headers,
   }
   try {
-    const res = UrlFetchApp.fetch(url, options);
+    const res = UrlFetchApp.fetch(url, options)
     return
   } catch (e) {
     throw new Error('リッチメニューをデフォルトに設定できませんでした')
@@ -80,7 +80,7 @@ function setDefaultMenu(richMenuId) {
  * @return {string} richMenuId - LINEから返されたリッチメニュー固有のID
  */
 function createNewRichMenu() {
-  const url = 'https://api.line.me/v2/bot/richmenu';
+  const url = 'https://api.line.me/v2/bot/richmenu'
 
   //自分の作成したいrichMenuJSONに書き換える
   const postData = {
@@ -135,7 +135,7 @@ function createNewRichMenu() {
     ]
   }
   const headers = {
-    'Content-Type': 'application/json; charset=UTF-8',
+    'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + access_token,
   }
 
@@ -145,11 +145,12 @@ function createNewRichMenu() {
     'payload': JSON.stringify(postData),
   }
   try {
-    const res = UrlFetchApp.fetch(url, options);
+    const res = UrlFetchApp.fetch(url, options)
     const richMenuId = JSON.parse(res).richMenuId
     console.log('richMenuId: ', richMenuId)
     return richMenuId
   } catch (e) {
+    console.log('リッチメニューオブジェクトをアップロードすることに失敗しました')
     throw new Error(e)
   }
 }
@@ -166,16 +167,16 @@ function uploadImage(richMenuId, file) {
   const headers = {
     'Content-Type': 'image/png',
     'Authorization': 'Bearer ' + access_token,
-  };
+  }
 
   const options = {
     'method': 'post',
     'headers': headers,
     'payload': blob,
-  };
+  }
 
   try {
-    UrlFetchApp.fetch(`https://api-data.line.me/v2/bot/richmenu/${richMenuId}/content`, options);
+    UrlFetchApp.fetch(`https://api-data.line.me/v2/bot/richmenu/${richMenuId}/content`, options)
     return
   } catch (e) {
     console.log(e)
