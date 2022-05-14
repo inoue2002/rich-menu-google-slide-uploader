@@ -12,6 +12,9 @@ GoogleSlideのページ設定を行うことで、LINEBotのリッチメニュ�
 
 
 作成したGoogleSlideのファイルIDを取得（ex:https://docs.google.com/presentation/d/${presentationId}/edit#slide=id.xxxxxxx）
+
 LINEBotを作成しアクセストークンを取得
+
 Slideを画像に変える時に保存するフォルダーを作成&フォルダーIDを取得
+
 `index.gs`をGoogleAppsScriptに貼り付け、環境変数の上記3つを書き換えた上、main関数を起動してセットアップを行う
